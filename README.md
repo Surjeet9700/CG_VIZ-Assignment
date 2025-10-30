@@ -189,5 +189,4 @@ No environment variables required for this project.
 
 ---
 
-**Built with ❤️ for the 3DIMLI Technical Assessment**
 
