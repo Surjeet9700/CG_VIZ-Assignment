@@ -17,10 +17,13 @@ module.exports = {
             },
         },
         extend: {
+            fontFamily: {
+                sans: ['Poppins', 'ui-sans-serif', 'system-ui'],
+            },
             screens: {
-                '1.7sm': '576px',    // Custom breakpoint from original
-                '2md': '768px',      // Custom breakpoint from original
-                '3xl': '1920px',     // Custom breakpoint from original
+                '1.7sm': '576px',
+                '2md': '768px',
+                '3xl': '1920px',
             },
             colors: {
                 border: "hsl(var(--border))",

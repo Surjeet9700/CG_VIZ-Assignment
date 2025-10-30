@@ -5,15 +5,15 @@ import { ChevronRight } from 'lucide-react'
 
 export function CTAPage() {
     return (
-        <div className="container h-fit md:h-[85vh] sm:px-6 z-40 5xl:h-[80vh] overflow-hidden md:top-0 grid place-items-center transition-opacity duration-700 opacity-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12 md:gap-4 w-full">
+        <section className="container h-fit md:h-[85vh] px-4 sm:px-6 z-40 5xl:h-[80vh] overflow-hidden md:top-0 grid place-items-center transition-opacity duration-700 opacity-100 py-12 md:py-0" aria-label="Call to action section">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-12 md:gap-4 w-full">
 
                 {/* Left Content Section */}
-                <div className="flex gap-6 flex-col items-center md:items-start text-center md:text-left">
+                <div className="flex gap-4 sm:gap-6 flex-col items-center md:items-start text-center md:text-left">
 
                     {/* Meet 3DIMLI */}
                     <motion.h2
-                        className="text-[15px] sm:text-2xl text-white"
+                        className="text-sm sm:text-xl md:text-2xl text-white"
                         initial={{ y: 60, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
@@ -24,7 +24,7 @@ export function CTAPage() {
 
                     {/* Main Title */}
                     <motion.h2
-                        className="text-3xl sm:text-5xl lg:text-5xl xl:text-5xl font-medium text-white"
+                        className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl font-medium text-white leading-tight"
                         initial={{ y: 60, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
@@ -39,7 +39,7 @@ export function CTAPage() {
 
                     {/* Description */}
                     <motion.p
-                        className="text-[11.25px] sm:text-lg text-neutral-300 leading-relaxed"
+                        className="text-sm sm:text-base md:text-lg text-neutral-300 leading-relaxed"
                         initial={{ y: 60, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
@@ -51,16 +51,17 @@ export function CTAPage() {
                     {/* CTA Button */}
                     <motion.a
                         href="/login"
-                        className="flex items-center justify-center rounded-full text-[8.7px] sm:text-base font-medium py-[0.5298rem] px-3.75 sm:py-3 sm:px-6 bg-transparent hover:bg-neutral-900 text-neutral-100 w-[150px] sm:w-60 overflow-hidden shine-infinite transition-all duration-300 border border-neutral-50-1/2"
+                        className="flex items-center justify-center rounded-full text-xs sm:text-sm md:text-base font-medium py-2.5 px-4 sm:py-3 sm:px-6 bg-transparent hover:bg-neutral-900 text-neutral-100 w-40 sm:w-48 md:w-60 overflow-hidden shine-infinite transition-all duration-300 border border-neutral-50-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         initial={{ y: 60, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
                         viewport={{ once: true, amount: 0.3 }}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
+                        aria-label="Start selling your digital products now"
                     >
                         Start Selling Now
-                        <ChevronRight className="ml-2 h-2.5 w-2.5 sm:h-4 sm:w-4" />
+                        <ChevronRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
                     </motion.a>
                 </div>
 
@@ -171,6 +172,6 @@ export function CTAPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

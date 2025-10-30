@@ -37,36 +37,57 @@ export function FloatingBubble({
 }: BubbleProps) {
     const [showTooltip, setShowTooltip] = useState(false)
 
-    // Calculating animation values based on scroll progress
+    // Scale positions based on screen size for responsive layout
+    const getScaledPosition = (pos: number) => {
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth < 768) {
+                return pos * 0.35 // Mobile: 35% scale
+            } else if (window.innerWidth < 1024) {
+                return pos * 0.5 // Tablet: 50% scale
+            }
+        }
+        return pos // Desktop: full scale
+    }
+
+    const scaledX = getScaledPosition(x)
+    const scaledY = getScaledPosition(y)
+
+    // Calculate when each bubble starts and ends its animation
     let bubbleStartProgress, bubbleEndProgress
 
+    // Special timing for bottom bubbles (Heart & Headphones) - they move up instead of to center
     if (index === 10 || index === 11) {
-        bubbleStartProgress = 0.5 + ((index - 10) * 0.1) 
-        bubbleEndProgress = bubbleStartProgress + 0.3 
+        bubbleStartProgress = 0.5 + ((index - 10) * 0.1)
+        bubbleEndProgress = bubbleStartProgress + 0.3
     } else {
-        bubbleStartProgress = index * 0.08 
+        // Sequential timing: each bubble starts 8% later than the previous
+        bubbleStartProgress = index * 0.08
         bubbleEndProgress = bubbleStartProgress + 0.25
     }
 
-    // Calculating progress for this specific bubble (0 = not started, 1 = fully animated)
+    // Normalize bubble's individual progress from 0 to 1
     const adjustedProgress = Math.max(0, Math.min(1,
         (scrollProgress - bubbleStartProgress) / (bubbleEndProgress - bubbleStartProgress)
     ))
 
-
-    const movePhase = Math.min(adjustedProgress / 0.7, 1) 
+    // Split animation into move (0-70%) and disappear (70-100%) phases for smooth transition
+    const movePhase = Math.min(adjustedProgress / 0.7, 1)
     const disappearPhase = Math.max((adjustedProgress - 0.7) / 0.3, 0)
+
     let animatedX, animatedY
+    // Heart & Headphones move upward, others collapse toward center
     if (index === 11 || index === 10) {
-        animatedX = x // Keep X position
-        animatedY = y - (adjustedProgress * 30) 
+        animatedX = scaledX
+        animatedY = scaledY - (adjustedProgress * 30) // Move up 30px
     } else {
-        animatedX = x * (1 - movePhase * 0.1) * (1 - disappearPhase)
-        animatedY = y * (1 - movePhase * 0.1) * (1 - disappearPhase)
+        // Gradually reduce position to move toward center (0,0)
+        animatedX = scaledX * (1 - movePhase * 0.1) * (1 - disappearPhase)
+        animatedY = scaledY * (1 - movePhase * 0.1) * (1 - disappearPhase)
     }
 
+    // Shrink bubble as it animates
     const animatedScale = 1 - (movePhase * 0.2) - (disappearPhase * 0.6)
-
+    // Fade out bubble gradually
     const animatedOpacity = 1 - (movePhase * 0.25) - (disappearPhase * 0.75)
 
     const tooltipPositionClasses = {
@@ -96,6 +117,10 @@ export function FloatingBubble({
             }}
             onMouseEnter={() => adjustedProgress < 0.5 && setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
+            onFocus={() => adjustedProgress < 0.5 && setShowTooltip(true)}
+            onBlur={() => setShowTooltip(false)}
+            role="button"
+            aria-label={`${label}: ${desc}`}
         >
             <div className="relative z-0">
                 {/* The Bubble */}
@@ -103,7 +128,7 @@ export function FloatingBubble({
           bubble-item relative rounded-full backdrop-blur-lg
           bg-white/70 dark:bg-white/10
           shadow-[0px_2px_10px_rgba(0,0,0,0.1)]
-          p-[0.5287rem] sm:p-3.5 
+          p-2 sm:p-3 md:p-3.5 
           flex items-center justify-center 
           cursor-grab
           border border-white/40 dark:border-white/10
@@ -111,8 +136,8 @@ export function FloatingBubble({
         `}
                     tabIndex={0}
                 >
-                    <div className="w-[15.625px] h-[15.625px] sm:w-10 sm:h-10 flex items-center justify-center">
-                        <Icon className={`text-${color}-600`} size={24} />
+                    <div className="w-4 h-4 sm:w-6 sm:h-6 md:w-10 md:h-10 flex items-center justify-center">
+                        <Icon className={`${color} w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6`} />
                     </div>
                 </div>
 
@@ -125,7 +150,7 @@ export function FloatingBubble({
                             <div className="flex flex-col space-y-1.5 p-6 pb-1 md:pb-2">
                                 <h3 className="tracking-tight text-xs md:text-sm font-medium flex items-center gap-2">
                                     <span className="p-1 bg-indigo-50 rounded-full">
-                                        <Icon className={`text-${color}-600`} size={16} />
+                                        <Icon className={color} size={16} />
                                     </span>
                                     {label}
                                 </h3>

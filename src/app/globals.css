@@ -156,3 +156,27 @@
   animation: shine 3s infinite;
   pointer-events: none;
 }
+
+
+/* Accessibility: Focus Visible for Keyboard Navigation */
+:focus-visible {
+  outline: 2px solid rgb(59, 130, 246);
+  outline-offset: 2px;
+}
+
+/* Accessibility: Skip to main content link */
+.skip-to-main {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1em;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+}
+
+.skip-to-main:focus {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 1em;
+}
