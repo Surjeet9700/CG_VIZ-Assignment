@@ -1,0 +1,155 @@
+'use client'
+
+import { motion } from 'framer-motion'
+import { LucideIcon } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+
+type BubbleProps = {
+    icon: LucideIcon
+    color: string
+    gradient: string
+    x: number
+    y: number
+    z: number
+    label: string
+    desc: string
+    image?: string
+    index: number
+    tooltipPosition?: 'top' | 'left' | 'right' | 'bottom'
+    extraContent?: ReactNode
+    scrollProgress?: number
+}
+
+export function FloatingBubble({
+    icon: Icon,
+    color,
+    gradient,
+    x,
+    y,
+    z,
+    label,
+    desc,
+    image,
+    index,
+    tooltipPosition = 'top',
+    extraContent,
+    scrollProgress = 0
+}: BubbleProps) {
+    const [showTooltip, setShowTooltip] = useState(false)
+
+    // Calculating animation values based on scroll progress
+    let bubbleStartProgress, bubbleEndProgress
+
+    if (index === 10 || index === 11) {
+        bubbleStartProgress = 0.5 + ((index - 10) * 0.1) 
+        bubbleEndProgress = bubbleStartProgress + 0.3 
+    } else {
+        bubbleStartProgress = index * 0.08 
+        bubbleEndProgress = bubbleStartProgress + 0.25
+    }
+
+    // Calculating progress for this specific bubble (0 = not started, 1 = fully animated)
+    const adjustedProgress = Math.max(0, Math.min(1,
+        (scrollProgress - bubbleStartProgress) / (bubbleEndProgress - bubbleStartProgress)
+    ))
+
+
+    const movePhase = Math.min(adjustedProgress / 0.7, 1) 
+    const disappearPhase = Math.max((adjustedProgress - 0.7) / 0.3, 0)
+    let animatedX, animatedY
+    if (index === 11 || index === 10) {
+        animatedX = x // Keep X position
+        animatedY = y - (adjustedProgress * 30) 
+    } else {
+        animatedX = x * (1 - movePhase * 0.1) * (1 - disappearPhase)
+        animatedY = y * (1 - movePhase * 0.1) * (1 - disappearPhase)
+    }
+
+    const animatedScale = 1 - (movePhase * 0.2) - (disappearPhase * 0.6)
+
+    const animatedOpacity = 1 - (movePhase * 0.25) - (disappearPhase * 0.75)
+
+    const tooltipPositionClasses = {
+        top: 'bottom-auto top-full left-1/2 transform -translate-x-1/2 mt-2',
+        left: 'left-auto right-full top-1/2 transform -translate-y-1/2 mr-2',
+        right: 'right-auto left-full top-1/2 transform -translate-y-1/2 ml-2',
+        bottom: 'top-auto bottom-full left-1/2 transform -translate-x-1/2 mb-2'
+    }
+
+    return (
+        <motion.div
+            className="absolute top-1/2 left-1/2 will-change-transform"
+            style={{ zIndex: z }}
+            initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
+            animate={{
+                x: animatedX,
+                y: animatedY,
+                opacity: animatedOpacity,
+                scale: animatedScale
+            }}
+            transition={{
+                duration: 0.8,
+                delay: index * 0.1,
+                ease: "easeOut",
+                x: { type: "spring", stiffness: 50, damping: 20 },
+                y: { type: "spring", stiffness: 50, damping: 20 }
+            }}
+            onMouseEnter={() => adjustedProgress < 0.5 && setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+        >
+            <div className="relative z-0">
+                {/* The Bubble */}
+                <div className={`
+          bubble-item relative rounded-full backdrop-blur-lg
+          bg-white/70 dark:bg-white/10
+          shadow-[0px_2px_10px_rgba(0,0,0,0.1)]
+          p-[0.5287rem] sm:p-3.5 
+          flex items-center justify-center 
+          cursor-grab
+          border border-white/40 dark:border-white/10
+          bg-linear-to-r ${gradient}
+        `}
+                    tabIndex={0}
+                >
+                    <div className="w-[15.625px] h-[15.625px] sm:w-10 sm:h-10 flex items-center justify-center">
+                        <Icon className={`text-${color}-600`} size={24} />
+                    </div>
+                </div>
+
+                {/* Tooltip Card - Only shown when not scrolled */}
+                {showTooltip && adjustedProgress < 0.5 && (
+                    <div className={`absolute transition-all duration-500 ease-in-out opacity-100 scale-100 ${tooltipPositionClasses[tooltipPosition]}`}
+                        style={{ zIndex: 9999 }}>
+                        <div className="rounded-lg dark:bg-neutral-900 dark:text-neutral-100 dark:border-neutral-600 text-card-foreground w-64 shadow-xl bg-white/95 border-indigo-400 border border-dashed">
+                            {/* Header */}
+                            <div className="flex flex-col space-y-1.5 p-6 pb-1 md:pb-2">
+                                <h3 className="tracking-tight text-xs md:text-sm font-medium flex items-center gap-2">
+                                    <span className="p-1 bg-indigo-50 rounded-full">
+                                        <Icon className={`text-${color}-600`} size={16} />
+                                    </span>
+                                    {label}
+                                </h3>
+                            </div>
+
+                            {/* Image (if exists) */}
+                            {image && (
+                                <div className="px-6 pt-0">
+                                    <div className="mt-3 rounded-md overflow-hidden border border-indigo-50 dark:border-neutral-700">
+                                        <img src={image} alt={label} className="w-full h-24 object-cover" />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Description */}
+                            <div className="p-6 pt-0">
+                                <p className="text-xs leading-relaxed text-[#0000008a] dark:text-neutral-400">
+                                    {desc}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    )
+}
