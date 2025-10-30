@@ -67,7 +67,7 @@ export function CTAPage() {
 
                 {/* Right Video Section */}
                 <motion.div
-                    className="relative"
+                    className="relative w-full overflow-hidden rounded-l-full"
                     initial={{ scale: 0.9, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
@@ -75,7 +75,8 @@ export function CTAPage() {
                 >
                     <video
                         width="100%"
-                        className="rounded-l-full"
+                        height="100%"
+                        className="w-full h-full object-cover"
                         autoPlay
                         loop
                         muted
