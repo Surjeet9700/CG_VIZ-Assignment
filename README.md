@@ -195,5 +195,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ---
 
-**Built with ❤️ for the 3DIMLI Technical Assessment**
 
