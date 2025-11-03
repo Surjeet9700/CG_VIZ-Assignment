@@ -41,7 +41,8 @@ export function FloatingBubble({
     const getScaledPosition = (pos: number) => {
         if (typeof window !== 'undefined') {
             if (window.innerWidth < 768) {
-                return pos * 0.35 // Mobile: 35% scale
+                // Mobile: Use exact positions (no additional scaling needed)
+                return pos
             } else if (window.innerWidth < 1024) {
                 return pos * 0.5 // Tablet: 50% scale
             }

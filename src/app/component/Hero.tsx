@@ -11,6 +11,12 @@ export function Hero() {
     const [scrollProgress, setScrollProgress] = useState(0)
     // Only fade content on desktop (1024px+) to maintain visibility on mobile/tablet
     const [isDesktop, setIsDesktop] = useState(false)
+    // Track if component is mounted to prevent hydration errors
+    const [isMounted, setIsMounted] = useState(false)
+
+    useEffect(() => {
+        setIsMounted(true)
+    }, [])
 
     useEffect(() => {
         // Detect screen size to enable/disable fade animations
@@ -215,6 +221,91 @@ export function Hero() {
             tooltipPosition: 'right' as const
         },
     ]
+
+    // Filter bubbles for mobile to match original (show exactly 5 bubbles like 3dimli.com)
+    const getMobileBubbles = () => {
+        // Return all bubbles during SSR to prevent hydration mismatch
+        if (!isMounted) {
+            return bubbles
+        }
+
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            // Mobile-specific bubble layout - EXACTLY matching 3dimli.com positions
+            // Responsive positioning for all mobile screen sizes
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            // Enhanced scaling for better consistency across all mobile devices
+            const baseWidth = 390; // Modern mobile baseline
+            const baseHeight = 844; // Modern mobile baseline
+            const widthScale = Math.min(screenWidth / baseWidth, 1.2);
+            const heightScale = Math.min(screenHeight / baseHeight, 1.2);
+
+            return [
+                // Top left bubble (positioned around heading text)
+                {
+                    icon: Box,
+                    color: 'text-indigo-600',
+                    gradient: 'from-white/70 to-indigo-50 dark:from-white/10 dark:to-transparent',
+                    x: -180 * widthScale,
+                    y: -310 * heightScale,
+                    z: 50,
+                    label: '3D Models',
+                    desc: 'Browse thousands of high-quality 3D models for your projects.',
+                    tooltipPosition: 'top' as const
+                },
+                // Top right bubble (positioned around heading text)
+                {
+                    icon: ShoppingCart,
+                    color: 'text-green-600',
+                    gradient: 'from-white/70 to-blue-50 dark:from-white/10 dark:to-transparent',
+                    x: 150 * widthScale,
+                    y: -290 * heightScale,
+                    z: 40,
+                    label: 'Search',
+                    desc: 'Find exactly what you need with our powerful search tools.',
+                    tooltipPosition: 'top' as const
+                },
+                // Bottom left bubble (around button area)
+                {
+                    icon: Tag,
+                    color: 'text-yellow-600',
+                    gradient: 'from-white/70 to-yellow-50 dark:from-white/10 dark:to-transparent',
+                    x: -160 * widthScale,
+                    y: -10 * heightScale,
+                    z: 20,
+                    label: 'Featured Models',
+                    desc: 'Discover our handpicked selection of premium models.',
+                    tooltipPosition: 'bottom' as const
+                },
+                // Bottom center bubble (below button)
+                {
+                    icon: Users,
+                    color: 'text-purple-600',
+                    gradient: 'from-white/70 to-purple-50 dark:from-white/10 dark:to-transparent',
+                    x: -10,
+                    y: 50 * heightScale,
+                    z: 30,
+                    label: 'Collections',
+                    desc: 'Curated sets of models for specific projects.',
+                    tooltipPosition: 'bottom' as const
+                },
+                // Bottom right bubble (around button area)
+                {
+                    icon: Search,
+                    color: 'text-orange-600',
+                    gradient: 'from-white/70 to-orange-50 dark:from-white/10 dark:to-transparent',
+                    x: 120 * widthScale,
+                    y: -10 * heightScale,
+                    z: 20,
+                    label: 'Categories',
+                    desc: 'Explore our organized collection by categories.',
+                    tooltipPosition: 'bottom' as const
+                }
+            ]
+        }
+        return bubbles
+    }
     return (
         <section
             className="relative w-full h-full"
@@ -229,7 +320,7 @@ export function Hero() {
 
             {/* Main content container */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4" role="main">
-                <div className="w-full">
+                <div className="w-full max-w-7xl mx-auto">
                     {/* Typewriter heading */}
                     <motion.div
                         id="typewriterID"
@@ -240,17 +331,16 @@ export function Hero() {
                         }}
                         transition={{ duration: 0.1, ease: 'linear' }}
                     >
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[3.66em] font-semibold leading-[1.2] sm:leading-[1.1] tracking-tight pb-4 sm:pb-6 text-[rgb(30,30,30)] dark:text-[rgb(230,230,230)] min-h-[100px] sm:min-h-[120px] md:min-h-[140px] lg:min-h-[180px] whitespace-pre-wrap px-4 sm:px-0 ease-in-out">
+                        <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-[3.66em] font-bold leading-[1.15] sm:leading-[1.1] tracking-tight pb-6 sm:pb-8 text-[rgb(30,30,30)] dark:text-[rgb(230,230,230)] min-h-[100px] sm:min-h-[120px] md:min-h-[140px] lg:min-h-[180px] whitespace-pre-wrap ease-in-out px-2">
                             <TypeAnimation
                                 sequence={[
+                                    'Instant Payouts,\nFull Control, No Limits',
+                                    3000,
                                     'Buy Once, Download\nAnytime, Keep Forever',
                                     3000,
                                     'Discover, Buy, and Sell\nDigital Products',
                                     3000,
-                                    'Sell for Free,\nPay Only When You Earn',
-                                    3000,
-                                    'Instant Payouts,\nFull Control, No Limits',
-                                    3000,
+
                                 ]}
                                 wrapper="span"
                                 speed={50}
@@ -268,10 +358,14 @@ export function Hero() {
                         }}
                         transition={{ duration: 0.1, ease: 'linear' }}
                     >
-                        <p className="text-xs sm:text-base md:text-lg px-5 md:px-0 font-medium leading-[1.4] text-[#0000008a] dark:text-neutral-400 max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-16">
-                            Your one-stop digital platform for 3D models and digital creations.<br className="hidden md:block" />
-                            Join our community of creators and collectors today.
-                        </p>
+                        <div className="mx-auto mb-4 sm:mb-10 md:mb-16 px-4 text-center">
+                            <p className="text-[10px] sm:text-sm md:text-lg leading-[1.4] text-[#0000008a] dark:text-neutral-400 font-normal sm:font-medium md:font-semibold">
+                                Your one-stop digital platform for 3D models and digital creations.
+                            </p>
+                            <p className="text-[10px] sm:text-sm md:text-lg leading-[1.4] text-[#0000008a] dark:text-neutral-400 font-normal sm:font-medium md:font-semibold">
+                                Join our community of creators and collectors today.
+                            </p>
+                        </div>
                     </motion.div>
 
                     <motion.div
@@ -295,12 +389,13 @@ export function Hero() {
                             overflow-hidden shine-infinite focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                             aria-label="Explore all products - Browse our collection of 3D models and digital creations"
                         >
-                            Explore all products
+                            <span className="relative z-10">Explore all products</span>
+                            <div className="absolute inset-0 rounded-full bg-white opacity-0 hover:opacity-10 transition-opacity duration-300"></div>
                         </a>
 
                         {/* Floating Bubbles */}
                         <div className="transition-opacity duration-1000 opacity-100">
-                            {bubbles.map((bubble, index) => (
+                            {getMobileBubbles().map((bubble, index) => (
                                 <FloatingBubble key={index} {...bubble} index={index} scrollProgress={scrollProgress} />
                             ))}
                         </div>

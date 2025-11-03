@@ -11,12 +11,12 @@ export default function Home() {
     <div>
       <Navbar />
 
-      <main className="grow" id="app-wrapper">
+      <main className="grow">
         <div className="relative min-h-[10vh]">
           {/* Extended viewport height creates scroll space for hero animations */}
           <div className="relative h-[200vh] sm:h-[250vh] lg:h-[280vh]">
             {/* Sticky positioning keeps hero fixed while scrolling through extended container */}
-            <div id="triggerID" className="sticky top-0 sm:top-[90px] h-screen">
+            <div id="triggerID" className="sticky top-0 h-screen -mt-16 sm:-mt-20 md:-mt-2">
               <Hero />
             </div>
           </div>
